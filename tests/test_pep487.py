@@ -23,7 +23,7 @@ from pep487 import PEP487Object
 class TestCompat:
 
     def test_pep487(self):
-        class TestProperty:
+        class TestProperty(object):
 
             def __set_name__(self, owner, name):
                 self.owner = owner
@@ -44,3 +44,16 @@ class TestCompat:
             pass
 
         assert SubTest1 in Test1.bar
+
+    def test_init_subclass(self):
+        class ParentClass(PEP487Object):
+            subclasses = []
+
+            def __init_subclass__(cls):
+                cls.subclasses.append(cls.__name__)
+
+        class ChildClass(ParentClass):
+            pass
+
+        #print(ParentClass.subclasses, ChildClass.subclasses, ChildClass.__name__)
+        assert ParentClass.subclasses == [ChildClass.__name__]
